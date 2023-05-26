@@ -14,14 +14,22 @@ class LoginController extends Controller
 
         $login = Societie::with('regional:id,province,district')->where($credentials)->first();
 
-        if (!$login) {
-            return response()->json(['error' => 'Invalid id_card_number or password!'], 401);
-        }
-
+        $credentials = request()->only('id_card_number', 'password');
+        $login = Societie::where($credentials)->first();
         $token = md5($login['id_card_number']);
 
-        // Lakukan tindakan setelah berhasil login, misalnya menyimpan token di sesi atau mengirimkan respons JSON.
+        $user = Societie::where('id_card_number', '=', $login['id_card_number'])->first()->update(['login_tokens' => $token]);
 
-        return ApiFormatter::createApi('200', new LoginResource($login));
+        return response()->json($user);
+
+        // if (!$login) {
+        //     return response()->json(['error' => 'Invalid id_card_number or password!'], 401);
+        // }
+
+        // return ApiFormatter::createApi('200', new LoginResource($login));
+    }
+
+    public function logout() {
+        return response()->json(['message' => 'success']);
     }
 }

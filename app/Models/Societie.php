@@ -13,6 +13,8 @@ class Societie extends Model
 
     protected $table = 'societies';
 
+    protected $fillable = ['login_tokens'];
+
     
     public function regional(): BelongsTo
     {
