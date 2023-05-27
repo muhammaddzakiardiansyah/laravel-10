@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,5 +24,6 @@ Route::post('/v1/auth/login', [LoginController::class, 'authenticate']);
 
 Route::group(['middleware' => 'auth.api'], function() {
     Route::post('/v1/auth/logout', [LoginController::class, 'logout']);
+    Route::post('/v1/consultation', [ConsultationController::class, 'createConsultation']);
 });
 

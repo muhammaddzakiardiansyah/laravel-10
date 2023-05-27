@@ -18,18 +18,20 @@ class LoginController extends Controller
         $login = Societie::where($credentials)->first();
         $token = md5($login['id_card_number']);
 
-        $user = Societie::where('id_card_number', '=', $login['id_card_number'])->first()->update(['login_tokens' => $token]);
+        Societie::where('id_card_number', '=', $login['id_card_number'])->first()->update(['login_tokens' => $token]);
 
-        return response()->json($user);
+        if (!$login) {
+            return response()->json(['error' => 'Invalid id_card_number or password!'], 401);
+        }
 
-        // if (!$login) {
-        //     return response()->json(['error' => 'Invalid id_card_number or password!'], 401);
-        // }
+        request()->session()->regenerate();
 
-        // return ApiFormatter::createApi('200', new LoginResource($login));
+        return ApiFormatter::createApi('200', new LoginResource($login));
     }
 
     public function logout() {
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
         return response()->json(['message' => 'success']);
     }
 }
